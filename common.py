@@ -13,6 +13,9 @@ from pdfminer.layout import LAParams
 from pdfminer.converter import PDFPageAggregator
 from pdfminer.pdfinterp import PDFTextExtractionNotAllowed
 
+__all__ = ['count_list', 'read_txt_file', 'creat_excel', 'name_repeat', 'get_html', 'load_data', 'split_data',
+           'log_print', 'qr_code', 'pdf2word']
+
 
 def count_list(array):
     """
@@ -113,6 +116,35 @@ def load_data(filename):
                 last_flag = this_flag
             D.append(d)
     return D
+
+
+def split_data(result_path, train_path='train.txt', test_path='test.txt', dev_path='dev.txt', train_fold=0.7,
+               test_fold=0.2):
+    """
+
+    Args:
+        result_path: NER数据集
+        train_path: 训练数据集
+        test_path: 测试数据集
+        dev_path: 验证数据集
+        train_fold: 训练集所占的比例
+        test_fold: 测试集所占的比例
+
+    Returns:训练集、测试集、验证集
+
+    """
+    train = open(train_path, 'w', encoding='utf-8')
+    test = open(test_path, 'w', encoding='utf-8')
+    dev = open(dev_path, 'w', encoding='utf-8')
+    content = read_txt_file(result_path)
+    for i in range(int(train_fold * len(content))):
+        train.write(content[i] + '\n')
+
+    for i in range(int(train_fold * len(content)), int((test_fold + train_fold) * len(content))):
+        test.write(content[i] + '\n')
+
+    for i in range(int((test_fold + train_fold) * len(content)), len(content)):
+        dev.write(content[i] + '\n')
 
 
 def log_print(log_path, content):
