@@ -14,7 +14,7 @@ from pdfminer.converter import PDFPageAggregator
 from pdfminer.pdfinterp import PDFTextExtractionNotAllowed
 
 __all__ = ['count_list', 'read_txt_file', 'creat_excel', 'name_repeat', 'get_html', 'load_data', 'bio_sent',
-           'product_ner_train_data', 'split_data','log_print', 'qr_code', 'pdf2word']
+           'product_ner_train_data', 'split_data', 'log_print', 'qr_code', 'pdf2word']
 
 
 def count_list(array):
