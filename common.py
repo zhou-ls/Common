@@ -13,8 +13,8 @@ from pdfminer.layout import LAParams
 from pdfminer.converter import PDFPageAggregator
 from pdfminer.pdfinterp import PDFTextExtractionNotAllowed
 
-__all__ = ['count_list', 'read_txt_file', 'creat_excel', 'name_repeat', 'get_html', 'load_data', 'split_data',
-           'log_print', 'qr_code', 'pdf2word']
+__all__ = ['count_list', 'read_txt_file', 'creat_excel', 'name_repeat', 'get_html', 'load_data', 'bio_sent',
+           'product_ner_train_data', 'split_data','log_print', 'qr_code', 'pdf2word']
 
 
 def count_list(array):
@@ -116,6 +116,64 @@ def load_data(filename):
                 last_flag = this_flag
             D.append(d)
     return D
+
+
+def bio_sent(sent, entity_list, head, tail):
+    """
+    加工成BIO标注序列, 单个
+    Args:
+        tail: 标注的实体中间及尾部， string
+        head: 标注的实体头， string
+        sent: 文本信息
+        entity_list: 该文本信息中所包含的所有的实体名称列表,去重后的
+
+    Returns:
+
+    """
+    sent = str(sent)
+    bio_list = ['O'] * len(sent)
+    for entity in entity_list:
+        for i in range(0, len(sent) - len(entity) + 1):
+            if sent[i:i + len(entity)] == entity:
+                bio_list[i] = head
+                for j in range(1, len(entity)):
+                    bio_list[i + j] = tail
+    return sent, bio_list
+
+
+def product_ner_train_data(result_path, sent_list, entity_list, **kwargs):
+    """
+
+    Args:
+        result_path:最终形成的NER训练数据存放的地址
+        sent_list:文本信息列表
+        entity_list:所有的实体名称形成的列表
+        **kwargs:  "B-PER,I-PER"=person_list  ...
+                    key为每类实体的标注标签
+                    value为每类实体形成的实体列表
+
+    Returns:
+
+    """
+    entity_list = sorted(list(set(entity_list)), key=lambda x: len(x), reverse=False)  # 按药品名称长度升序排列
+    f = open(result_path, 'w', encoding="utf-8")
+    for sent in sent_list:
+        sent = str(sent)
+        bio_list = ['O'] * len(sent)
+        for entity in entity_list:
+            for i in range(0, len(sent) - len(entity) + 1):
+                if sent[i:i + len(entity)] == entity:  # 以一个实体字符串的长度在该文本信息上形成滑动窗口
+                    for key, value in kwargs.items():
+                        if entity in value:
+                            head, tail = key.split(',')[0], key.split(',')[1]
+                            bio_list[i] = head
+                            for j in range(1, len(entity)):
+                                bio_list[i + j] = tail
+        for char, tag in zip(sent, bio_list):
+            if not char:
+                print(sent)
+            f.write(char + ' ' + tag + '\n')
+        f.write('\n')
 
 
 def split_data(result_path, train_path='train.txt', test_path='test.txt', dev_path='dev.txt', train_fold=0.7,
