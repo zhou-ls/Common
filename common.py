@@ -2,6 +2,7 @@
 用于封装各种常用函数功能
 """
 import logging
+import re
 import qrcode
 import requests
 from openpyxl import Workbook
@@ -13,8 +14,16 @@ from pdfminer.layout import LAParams
 from pdfminer.converter import PDFPageAggregator
 from pdfminer.pdfinterp import PDFTextExtractionNotAllowed
 
-__all__ = ['count_list', 'read_txt_file', 'creat_excel', 'name_repeat', 'get_html', 'load_data', 'bio_sent',
+__all__ = ['remove_space','count_list', 'read_txt_file', 'creat_excel', 'name_repeat', 'get_html', 'load_data', 'bio_sent',
            'product_ner_train_data', 'split_data', 'log_print', 'qr_code', 'pdf2word']
+
+
+def remove_space(text: str):
+    """
+    移除文本中的空格
+    :return:
+    """
+    return re.sub('\s+', '', text).strip()
 
 
 def count_list(array):
