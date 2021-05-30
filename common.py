@@ -3,6 +3,10 @@
 """
 import logging
 import re
+import smtplib
+from email.header import Header
+from email.mime.text import MIMEText
+
 import qrcode
 import requests
 from openpyxl import Workbook
@@ -14,8 +18,8 @@ from pdfminer.layout import LAParams
 from pdfminer.converter import PDFPageAggregator
 from pdfminer.pdfinterp import PDFTextExtractionNotAllowed
 
-__all__ = ['remove_space','count_list', 'read_txt_file', 'creat_excel', 'name_repeat', 'get_html', 'load_data', 'bio_sent',
-           'product_ner_train_data', 'split_data', 'log_print', 'qr_code', 'pdf2word']
+__all__ = ['remove_space','count_list', 'read_txt_file', 'creat_excel', 'name_repeat', 'get_html', 'load_data',
+           'bio_sent', 'product_ner_train_data', 'split_data', 'log_print', 'qr_code', 'pdf2word', 'send_mail']
 
 
 def remove_space(text: str):
@@ -285,3 +289,39 @@ def pdf2word(src_path, result_path):
                         content, style='ListBullet'  # 添加段落，样式为unordered list类型
                     )
                 document.save(result_path)  # 保存这个文档
+
+
+def send_mail(mail_host,
+              mail_user,
+              mail_pass,
+              sender,
+              receiver,
+              sender_name,
+              receiver_name,
+              title,
+              content):
+    """
+    发送邮件
+    :param mail_host: 发送邮件的服务器，如 smtp.qq.com
+    :param mail_user： 用户  如 123456@qq.com
+    :param mail_pass： 授权码
+    :param sender： 发送方   如 123456@qq.com
+    :param receiver： 接收方 如 123456789@qq.com
+    :param sender_name： 发件人名字
+    :param receiver_name： 收件人名字
+    :param title： 邮件主题
+    :param content： 邮件内容
+    :return
+    """
+    message = MIMEText(content, 'html', 'utf-8')  # 邮件内容
+    message['From'] = Header(sender_name, 'utf-8')  # 发件人名字
+    message['To'] = Header(receiver_name, 'utf-8')  # 收件人名字
+    message['Subject'] = Header(title, 'utf-8')
+    try:
+        smtpObj = smtplib.SMTP()
+        smtpObj.connect(mail_host, 25)  # 25 为 SMTP 端口号
+        smtpObj.login(mail_user, mail_pass)
+        smtpObj.sendmail(sender, receiver, message.as_string())
+        print("邮件发送成功")
+    except smtplib.SMTPException:
+        print("Error: 无法发送邮件")
