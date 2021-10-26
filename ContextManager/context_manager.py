@@ -50,4 +50,4 @@ def my_open(file_name, file_mode):
 with my_open("1.txt", "r") as f:
     # content = f.read()
     # print(content)
-    f.write("qqq")  # 虽然报错， 但仍然执行了 关闭连接操作 __exit__()
+    f.write("qqq")  # 虽然报错， 但仍然执行了 关闭连接操作, finally 中的
