@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
 from dispatch.value_dispatch import value_dispatch
 
+""" 
+可优化大量if else 代码
+"""
+
 
 @value_dispatch
 def get_discount(level):
