@@ -156,12 +156,15 @@ def bio_sent(sent, entity_list, head, tail):
 
 def product_ner_train_data(result_path, sent_list, entity_list, **kwargs):
     """
-
+    第一步在词典中匹配出该句子中所含有的所有的实体名称，得到该句子对应的实体列表 entity_list
+    第二步调用 name_repeat() 进行嵌套名称的去重
+    第三步调用 product_ner_train_data() 生成 NER 模型的训练集
     Args:
         result_path:最终形成的NER训练数据存放的地址
         sent_list:文本信息列表
         entity_list:所有的实体名称形成的列表
         **kwargs:  "B-PER,I-PER"=person_list  ...
+                    person_list 为某一种实体类型组成的实体列表
                     key为每类实体的标注标签
                     value为每类实体形成的实体列表
 
