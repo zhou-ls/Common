@@ -18,7 +18,7 @@ from pdfminer.layout import LAParams
 from pdfminer.converter import PDFPageAggregator
 from pdfminer.pdfinterp import PDFTextExtractionNotAllowed
 
-__all__ = ['remove_space','count_list', 'read_txt_file', 'creat_excel', 'name_repeat', 'get_html', 'load_data',
+__all__ = ['remove_space', 'count_list', 'read_txt_file', 'creat_excel', 'name_repeat', 'get_html', 'load_data',
            'bio_sent', 'product_ner_train_data', 'split_data', 'log_print', 'qr_code', 'pdf2word', 'send_mail']
 
 
