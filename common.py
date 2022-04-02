@@ -2,24 +2,27 @@
 用于封装各种常用函数功能
 """
 import logging
+import platform
 import re
 import smtplib
+import socket
+from collections import Counter
 from email.header import Header
 from email.mime.text import MIMEText
 
 import qrcode
 import requests
-from openpyxl import Workbook
-from collections import Counter
 from docx import Document
-from pdfminer.pdfparser import PDFParser, PDFDocument
-from pdfminer.pdfinterp import PDFResourceManager, PDFPageInterpreter
-from pdfminer.layout import LAParams
+from openpyxl import Workbook
 from pdfminer.converter import PDFPageAggregator
+from pdfminer.layout import LAParams
+from pdfminer.pdfinterp import PDFResourceManager, PDFPageInterpreter
 from pdfminer.pdfinterp import PDFTextExtractionNotAllowed
+from pdfminer.pdfparser import PDFParser, PDFDocument
 
-__all__ = ['remove_space', 'count_list', 'read_txt_file', 'creat_excel', 'name_repeat', 'get_html', 'load_data',
-           'bio_sent', 'product_ner_train_data', 'split_data', 'log_print', 'qr_code', 'pdf2word', 'send_mail']
+__all__ = ['remove_space', 'get_host_ip', 'count_list', 'read_txt_file', 'creat_excel', 'name_repeat', 'get_html',
+           'load_data', 'bio_sent', 'product_ner_train_data', 'split_data', 'log_print', 'qr_code', 'pdf2word',
+           'send_mail']
 
 
 def remove_space(text: str):
@@ -28,6 +31,20 @@ def remove_space(text: str):
     :return:
     """
     return re.sub('\s+', '', text).strip()
+
+
+def get_host_ip():
+    """
+    查询本机ip地址和操作系统
+    :return: ip
+    """
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    try:
+        s.connect(('8.8.8.8', 80))
+        ip = s.getsockname()[0]
+    finally:
+        s.close()
+    return ip, platform.platform()
 
 
 def count_list(array):
@@ -328,3 +345,7 @@ def send_mail(mail_host,
         print("邮件发送成功")
     except smtplib.SMTPException:
         print("Error: 无法发送邮件")
+
+
+if __name__ == '__main__':
+    print(get_host_ip())
