@@ -33,8 +33,9 @@ def parse_level_1(level):
 
 
 # 当用户等级为2或者3时，折扣都是0.2
-@get_discount.register(2)
-@get_discount.register(3)
+# @get_discount.register(2)
+# @get_discount.register(3)
+@get_discount.register_for_all([2, 3])
 def parse_level_4(level):
     # 此处可有大量计算代码
     discount = 0.2

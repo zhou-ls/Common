@@ -2,6 +2,7 @@
 用于封装各种常用函数功能
 """
 import logging
+import os
 import platform
 import re
 import smtplib
@@ -20,9 +21,9 @@ from pdfminer.pdfinterp import PDFResourceManager, PDFPageInterpreter
 from pdfminer.pdfinterp import PDFTextExtractionNotAllowed
 from pdfminer.pdfparser import PDFParser, PDFDocument
 
-__all__ = ['remove_space', 'get_host_ip', 'count_list', 'read_txt_file', 'creat_excel', 'name_repeat', 'get_html',
-           'load_data', 'bio_sent', 'product_ner_train_data', 'split_data', 'log_print', 'qr_code', 'pdf2word',
-           'send_mail']
+__all__ = ['remove_space', 'get_file_name', 'get_host_ip', 'count_list', 'read_txt_file', 'creat_excel', 'name_repeat',
+           'get_html', 'load_data', 'bio_sent', 'product_ner_train_data', 'split_data', 'log_print', 'qr_code',
+           'pdf2word', 'send_mail']
 
 
 def remove_space(text: str):
@@ -31,6 +32,11 @@ def remove_space(text: str):
     :return:
     """
     return re.sub('\s+', '', text).strip()
+
+
+def get_file_name(path: str) -> str:
+    # 获取不同操作系统(windows, linux)下的路径文件名
+    return os.path.basename(path)
 
 
 def get_host_ip():
