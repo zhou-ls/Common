@@ -17,8 +17,7 @@ from docx import Document
 from openpyxl import Workbook
 from pdfminer.converter import PDFPageAggregator
 from pdfminer.layout import LAParams
-from pdfminer.pdfinterp import PDFResourceManager, PDFPageInterpreter
-from pdfminer.pdfinterp import PDFTextExtractionNotAllowed
+from pdfminer.pdfinterp import PDFResourceManager, PDFPageInterpreter, PDFTextExtractionNotAllowed
 from pdfminer.pdfparser import PDFParser, PDFDocument
 
 __all__ = ['remove_space', 'get_file_name', 'get_host_ip', 'count_list', 'read_txt_file', 'creat_excel', 'name_repeat',
