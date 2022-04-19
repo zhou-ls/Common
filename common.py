@@ -20,9 +20,33 @@ from pdfminer.layout import LAParams
 from pdfminer.pdfinterp import PDFResourceManager, PDFPageInterpreter, PDFTextExtractionNotAllowed
 from pdfminer.pdfparser import PDFParser, PDFDocument
 
-__all__ = ['remove_space', 'get_file_name', 'get_host_ip', 'count_list', 'read_txt_file', 'creat_excel', 'name_repeat',
-           'get_html', 'load_data', 'bio_sent', 'product_ner_train_data', 'split_data', 'log_print', 'qr_code',
-           'pdf2word', 'send_mail']
+
+__all__ = ["trying", "remove_space", "get_file_name", "get_host_ip", "count_list", "read_txt_file", "creat_excel",
+           "name_repeat", "get_html", "load_data", "bio_sent", "product_ner_train_data", "split_data", "log_print",
+           "qr_code", "pdf2word", "send_mail"]
+
+
+def trying(counts: int):
+    """
+    装饰器
+    传入重试次数，如果失败，重试
+    :param counts: 重试次数
+    :return:
+    """
+
+    def decorator(func):
+        def wrapper(*args, **kwargs):
+            # nonlocal counts
+            for i in range(counts):
+                try:
+                    return func(*args, **kwargs)
+                except Exception as e:
+                    logging.error(e)
+                    logging.info('第{}次重试'.format(i + 1))
+
+        return wrapper
+
+    return decorator
 
 
 def remove_space(text: str):
