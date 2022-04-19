@@ -20,7 +20,6 @@ from pdfminer.layout import LAParams
 from pdfminer.pdfinterp import PDFResourceManager, PDFPageInterpreter, PDFTextExtractionNotAllowed
 from pdfminer.pdfparser import PDFParser, PDFDocument
 
-
 __all__ = ["trying", "remove_space", "get_file_name", "get_host_ip", "count_list", "read_txt_file", "creat_excel",
            "name_repeat", "get_html", "load_data", "bio_sent", "product_ner_train_data", "split_data", "log_print",
            "qr_code", "pdf2word", "send_mail"]
@@ -54,7 +53,7 @@ def remove_space(text: str):
     移除文本中的空格
     :return:
     """
-    return re.sub('\s+', '', text).strip()
+    return re.sub(r"\s+", '', text).strip()
 
 
 def get_file_name(path: str) -> str:
@@ -367,10 +366,10 @@ def send_mail(mail_host,
     message['To'] = Header(receiver_name, 'utf-8')  # 收件人名字
     message['Subject'] = Header(title, 'utf-8')
     try:
-        smtpObj = smtplib.SMTP()
-        smtpObj.connect(mail_host, 25)  # 25 为 SMTP 端口号
-        smtpObj.login(mail_user, mail_pass)
-        smtpObj.sendmail(sender, receiver, message.as_string())
+        smtp = smtplib.SMTP()
+        smtp.connect(mail_host, 25)  # 25 为 SMTP 端口号
+        smtp.login(mail_user, mail_pass)
+        smtp.sendmail(sender, receiver, message.as_string())
         print("邮件发送成功")
     except smtplib.SMTPException:
         print("Error: 无法发送邮件")
