@@ -2,6 +2,7 @@
 # 重载
 from functools import singledispatch
 
+
 @singledispatch
 def show(obj):
     print(obj, type(obj), "obj")
