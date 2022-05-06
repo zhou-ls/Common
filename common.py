@@ -4,6 +4,7 @@
 import logging
 import os
 import platform
+import random
 import re
 import smtplib
 import socket
@@ -11,6 +12,7 @@ from collections import Counter
 from email.header import Header
 from email.mime.text import MIMEText
 
+import pkuseg
 import qrcode
 import requests
 from docx import Document
@@ -22,13 +24,14 @@ from pdfminer.pdfparser import PDFParser, PDFDocument
 
 __all__ = ["trying", "remove_space", "get_file_name", "get_host_ip", "count_list", "read_txt_file", "creat_excel",
            "name_repeat", "get_html", "load_data", "bio_sent", "product_ner_train_data", "split_data", "log_print",
-           "qr_code", "pdf2word", "send_mail"]
+           "qr_code", "pdf2word", "send_mail", "word_repetition"]
 
 
 def trying(counts: int):
     """
     装饰器
     传入重试次数，如果失败，重试
+    也可以使用 tenacity 模块来进行重试
     :param counts: 重试次数
     :return:
     """
@@ -373,6 +376,40 @@ def send_mail(mail_host,
         print("邮件发送成功")
     except smtplib.SMTPException:
         print("Error: 无法发送邮件")
+
+
+def word_repetition(text, word_list, max_len=4):
+    """
+    random word repetition
+    :param text: 需要随机重复某些字的句子
+    :param word_list: 不可分割的子字符串
+    :param max_len: 最大重复次数
+    :return:
+    """
+    seg = pkuseg.pkuseg(user_dict=word_list, model_name='medicine')
+    cut_text = seg.cut(text)
+    text = list(cut_text)
+    actual_len = len(text)
+    dup_len = random.randint(a=1, b=int(0.2 * actual_len))
+    dup_word_index = []
+    while True:
+        index = random.randint(1, actual_len - 1)
+        flag = False
+        for word in word_list:
+            if text[index] in word:
+                flag = True
+                continue
+        if not flag:
+            dup_word_index.append(index)
+        dup_word_index = list(set(dup_word_index))
+        if len(dup_word_index) == dup_len:
+            break
+    dup_text = ''
+    for index, word in enumerate(text):
+        dup_text += word
+        if index in dup_word_index:
+            dup_text += word
+    return dup_text
 
 
 if __name__ == '__main__':
