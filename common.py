@@ -24,7 +24,16 @@ from pdfminer.pdfparser import PDFParser, PDFDocument
 
 __all__ = ["trying", "remove_space", "get_file_name", "get_host_ip", "count_list", "read_txt_file", "creat_excel",
            "name_repeat", "get_html", "load_data", "bio_sent", "product_ner_train_data", "split_data", "log_print",
-           "qr_code", "pdf2word", "send_mail", "word_repetition"]
+           "qr_code", "pdf2word", "send_mail", "word_repetition", "most_frequent"]
+
+
+def most_frequent(array):
+    """
+    使用max查找列表中出现次数最多的元素
+    :param array:
+    :return:
+    """
+    return max(set(array), key=array.count)
 
 
 def trying(counts: int):
