@@ -29,7 +29,7 @@ from prettytable import PrettyTable
 
 __all__ = ["trying", "remove_space", "get_file_name", "get_host_ip", "count_list", "read_txt_file", "creat_excel",
            "name_repeat", "get_html", "load_data", "bio_sent", "product_ner_train_data", "split_data", "log_print",
-           "qr_code", "pdf2word", "send_mail", "word_repetition", "most_frequent"]
+           "qr_code", "pdf2word", "send_mail", "word_repetition", "most_frequent", "CodeLinesCounter"]
 
 
 def most_frequent(array):
