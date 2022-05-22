@@ -1,6 +1,4 @@
-"""
-用于封装各种常用函数功能
-"""
+# -*- coding: utf-8 -*-
 import logging
 import os
 import platform
@@ -11,6 +9,8 @@ import socket
 from collections import Counter
 from email.header import Header
 from email.mime.text import MIMEText
+from os import walk
+from os.path import join, getsize, abspath
 
 import pkuseg
 import qrcode
@@ -21,6 +21,11 @@ from pdfminer.converter import PDFPageAggregator
 from pdfminer.layout import LAParams
 from pdfminer.pdfinterp import PDFResourceManager, PDFPageInterpreter, PDFTextExtractionNotAllowed
 from pdfminer.pdfparser import PDFParser, PDFDocument
+from prettytable import PrettyTable
+
+"""
+用于封装各种常用函数功能
+"""
 
 __all__ = ["trying", "remove_space", "get_file_name", "get_host_ip", "count_list", "read_txt_file", "creat_excel",
            "name_repeat", "get_html", "load_data", "bio_sent", "product_ner_train_data", "split_data", "log_print",
@@ -419,6 +424,81 @@ def word_repetition(text, word_list, max_len=4):
         if index in dup_word_index:
             dup_text += word
     return dup_text
+
+
+class CodeLinesCounter(object):
+    """
+    统计代码行数
+    how to use:
+    counter = CodeLinesCounter(
+    languages={'py': 'Python', 'c': 'C', 'cpp': 'C++', 'java': 'Java', 'js': 'JavaScript', 'html': 'HTML', 'css': 'CSS',
+               'txt': 'Plain text'})
+    counter.scan(r'D:\')
+    counter.report()
+    """
+    SIZES = [('B', 1), ('KB', 1024), ('MB', 1024 ** 2), ('GB', 1024 ** 3), ('TB', 1024 ** 4)]
+
+    def __init__(self, languages):
+        self._languages = languages
+        self._results = {suffix: (0, 0, 0) for suffix in languages}
+        self._successful = self._error = 0
+
+    def scan(self, directory, log=False):
+        if log: print('Scanning', directory)
+        try:
+            for root, _, files in walk(abspath(directory)):
+                for filename in files:
+                    suffix = filename[filename.rfind('.') + 1:]
+                    filename = join(root, filename)
+                    if suffix in self._results:
+                        lines, size, numFiles = self._results[suffix]
+                        numFiles += 1
+                        size += getsize(filename)
+                        try:
+                            ln = 0
+                            with open(filename, 'r', encoding='utf-8') as f:
+                                for line in f:
+                                    if line and not line.isspace():
+                                        ln += 1
+                        except UnicodeDecodeError:  # Try 'gbk' encoding
+                            try:
+                                ln = 0
+                                with open(filename, 'r', encoding='gbk') as f:
+                                    for line in f:
+                                        if line and not line.isspace():
+                                            ln += 1
+                            except:
+                                print(filename, '[Error: unknown encoding]')
+                                self._error += 1
+                            else:
+                                lines += ln
+                        except Exception as e:
+                            print(filename, '[Unknown error: %s]' % e)
+                            self._error += 1
+                            continue
+                        lines += ln
+                        if log: print(f'{filename} [{ln}]')
+                        self._successful += 1
+                        self._results[suffix] = (lines, size, numFiles)
+                    elif log:
+                        print(filename, '[None]')
+        except KeyboardInterrupt:
+            print('\nUser stopped operation')
+        else:
+            if log: print('Scan finished')
+
+    def report(self):
+        table = PrettyTable(['Language', 'Lines', 'Size', 'Files'],
+                            title=f'Scan result (OK {self._successful}, Error {self._error})')
+        for suffix, (lines, size, files) in sorted(self._results.items(), key=lambda x: x[1], reverse=True):
+            table.add_row([self._languages[suffix], lines, self.__format_size(size), files])
+        print(table)
+
+    def __format_size(self, bytes):
+        for suffix, size in self.SIZES:
+            if bytes < size * 1024:
+                return '%.2f %s' % (bytes / size, suffix)
+        return '%.2f %s' % (bytes / self.SIZES[-1][1], 2, self.SIZES[-1][0])
 
 
 if __name__ == '__main__':
