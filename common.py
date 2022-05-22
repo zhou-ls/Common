@@ -444,7 +444,8 @@ class CodeLinesCounter(object):
         self._successful = self._error = 0
 
     def scan(self, directory, log=False):
-        if log: print('Scanning', directory)
+        if log:
+            print('Scanning', directory)
         try:
             for root, _, files in walk(abspath(directory)):
                 for filename in files:
